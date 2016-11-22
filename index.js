@@ -60,6 +60,8 @@ function Slideout(options) {
   this._opened = false;
   this._preventOpen = false;
   this._touch = options.touch === undefined ? true : options.touch && true;
+  this._class = options.class === undefined ? undefined : options.class;
+
 
   // Sets panel
   this.panel = options.panel;
@@ -96,6 +98,7 @@ Slideout.prototype.open = function() {
   var self = this;
   this.emit('beforeopen');
   if (html.className.search('slideout-open') === -1) { html.className += ' slideout-open'; }
+  if (this._class && html.className.search('slideout-' + this._class) === -1) { html.className += (' slideout-' + this._class); }
   this._setTransition();
   this._translateXTo(this._translateTo);
   this._opened = true;
@@ -120,6 +123,7 @@ Slideout.prototype.close = function() {
   this._opened = false;
   setTimeout(function() {
     html.className = html.className.replace(/ slideout-open/, '');
+    html.className = html.className.replace(' slideout-' + self._class, '');
     self.panel.style.transition = self.panel.style['-webkit-transition'] = self.panel.style[prefix + 'transform'] = self.panel.style.transform = '';
     self.emit('close');
   }, this._duration + 50);
@@ -263,6 +267,10 @@ Slideout.prototype._initTouchEvents = function() {
 
       if (!self._moved && html.className.search('slideout-open') === -1) {
         html.className += ' slideout-open';
+      }
+
+      if (!self._moved && self._class && html.className.search('slideout-' + self._class) === -1) {
+          html.className += (' slideout-' + self._class);
       }
 
       self.panel.style[prefix + 'transform'] = self.panel.style.transform = 'translateX(' + translateX + 'px)';
