@@ -246,7 +246,7 @@ Slideout.prototype._initTouchEvents = function() {
       return;
     }
 
-    if (Math.abs(dif_x) > 20) {
+    if (Math.abs(dif_x) > 20 && (html.className.search('slideout-open') === -1 || self._class && html.className.search('slideout-' + self._class) !== -1 || !self._class)) {
 
       self._opening = true;
 
