@@ -1,6 +1,6 @@
 {
   "name": "slideout.js",
-  "repository": "https://github.com/mathatan/slideout",
+  "repository": "https://github.com/Mango/slideout",
   "description": "A touch slideout navigation menu for your mobile web apps.",
   "author": "Guille Paz <guille87paz@gmail.com>",
   "dependencies": {
@@ -18,7 +18,7 @@
     "test",
     "demo"
   ],
-  "homepage": "https://github.com/mathatan/slideout",
+  "homepage": "https://github.com/mango/slideout",
   "moduleType": [
     "adecouplemd",
     "globals",

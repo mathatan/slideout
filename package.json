@@ -1,9 +1,9 @@
 {
-  "name": "slideoutFork",
+  "name": "slideout",
   "repository": "git@github.com:mathatan/slideout.git",
   "description": "A touch slideout navigation menu for your mobile web apps.",
   "author": "Guille Paz <guille87paz@gmail.com>",
-  "version": "0.1.13",
+  "version": "0.1.12",
   "private": true,
   "scripts": {
     "build": "node browserify.js",
@@ -25,11 +25,28 @@
     "mocha": "2.1.0",
     "uglify-js": "2.6.1"
   },
+  "main": "index.js",
   "keywords": [
     "slideout",
     "offcanvas",
     "menu",
     "touch"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "spm": {
+    "dependencies": {
+      "decouple": "0.0.2",
+      "emitter": "git+https://github.com/Mango/emitter.git#0.0.7"
+    },
+    "main": "index.js"
+  },
+  "filename": "slideout.min.js",
+  "autoupdate": {
+    "source": "git",
+    "target": "git://github.com/mathatan/slideout.git",
+    "basePath": "dist",
+    "files": [
+      "*.js"
+    ]
+  }
 }
