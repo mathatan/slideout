@@ -290,6 +290,7 @@ Slideout.prototype._initTouchEvents = function() {
  */
 Slideout.prototype.enableTouch = function() {
   this._touch = true;
+  this._preventOpen = undefined;
   return this;
 };
 
@@ -298,6 +299,7 @@ Slideout.prototype.enableTouch = function() {
  */
 Slideout.prototype.disableTouch = function() {
   this._touch = false;
+  this._preventOpent = true;
   return this;
 };
 
