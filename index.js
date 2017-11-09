@@ -299,7 +299,7 @@ Slideout.prototype.enableTouch = function() {
  */
 Slideout.prototype.disableTouch = function() {
   this._touch = false;
-  this._preventOpent = true;
+  this._preventOpen = true;
   return this;
 };
 
