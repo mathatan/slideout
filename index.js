@@ -336,8 +336,17 @@ Slideout.prototype.destroy = function() {
   // Close before clean
   this.close();
 
-  if(this.panel && this.panel.classList.contains('slideout-panel')) { this.panel.classList.remove('slideout-panel'); }
-  if(this.menu && this.menu.classList.contains('slideout-menu')) { this.menu.classList.remove('slideout-menu'); }
+  if (this._class && html.classList.contains('slideout-' + this._class)) {
+    html.classList.remove('slideout-' + this._class);
+  }
+  if (this.panel && this.panel.classList.contains('slideout-panel')) { this.panel.classList.remove('slideout-panel'); }
+  if (this.panel && this.panel.classList.contains('slideout-panel-' + this._side)) {
+    this.panel.classList.remove('slideout-panel-' + this._side);
+  }
+  if (this.menu && this.menu.classList.contains('slideout-menu')) { this.menu.classList.remove('slideout-menu'); }
+  if (this.menu && this.menu.classList.contains('slideout-menu-' + this._side)) {
+    this.menu.classList.remove('slideout-menu-' + this._side);
+  }
 
   // Remove event listeners
   doc.removeEventListener(touch.move, this._preventMove);
