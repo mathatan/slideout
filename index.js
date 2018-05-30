@@ -310,6 +310,9 @@ Slideout.prototype.destroy = function() {
   // Close before clean
   this.close();
 
+  if(this.panel && this.panel.className.search('slideout-panel') !== -1) { this.panel.classList.remove('slideout-panel'); }
+  if(this.menu && this.menu.className.search('slideout-menu') !== -1) { this.menu.classList.remove('slideout-menu'); }
+
   // Remove event listeners
   doc.removeEventListener(touch.move, this._preventMove);
   this.panel.removeEventListener(touch.start, this._resetTouchFn);
@@ -319,7 +322,10 @@ Slideout.prototype.destroy = function() {
   doc.removeEventListener('scroll', this._onScrollFn);
 
   // Remove methods
-  this.open = this.close = function() {};
+  this.open = this.close = function () {};
+
+  // Remove HTML elements
+  this.panel = this.menu = undefined;
 
   // Return the instance so it can be easily dereferenced
   return this;
