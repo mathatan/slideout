@@ -291,7 +291,7 @@ Slideout.prototype._initTouchEvents = function() {
         self._opening = false;
       }
 
-      if (!(self._moved && !html.classList.contains('slideout-open'))) {
+      if (!(self._moved && html.classList.contains('slideout-open'))) {
         html.classList.add('slideout-open');
       }
 
