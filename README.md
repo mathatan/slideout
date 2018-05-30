@@ -24,7 +24,7 @@
 Slideout is available on cdnjs
 
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/0.1.12/slideout.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/1.0.1/slideout.min.js"></script>
 ```
 
 Also you can use one of many package managers
@@ -67,21 +67,30 @@ body {
 
 .slideout-menu {
   position: fixed;
-  left: 0;
   top: 0;
   bottom: 0;
-  right: 0;
-  z-index: 0;
   width: 256px;
-  overflow-y: auto;
+  min-height: 100vh;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+  z-index: 0;
   display: none;
 }
 
+.slideout-menu-left {
+  left: 0;
+}
+
+.slideout-menu-right {
+  right: 0;
+}
+
 .slideout-panel {
-  position:relative;
+  position: relative;
   z-index: 1;
   will-change: transform;
+  background-color: #FFF; /* A background-color is required */
+  min-height: 100vh;
 }
 
 .slideout-open,
@@ -95,7 +104,7 @@ body {
 }
 ```
 
-Then you just include Slideout.js and create a new instance with some options:
+Then you just include Slideout.js, create a new instance with some options and call the toggle method:
 
 ```html
 <script src="dist/slideout.min.js"></script>
@@ -105,6 +114,11 @@ Then you just include Slideout.js and create a new instance with some options:
     'menu': document.getElementById('menu'),
     'padding': 256,
     'tolerance': 70
+  });
+
+  // Toggle button
+  document.querySelector('.toggle-button').addEventListener('click', function() {
+    slideout.toggle();
   });
 </script>
 ```
@@ -136,13 +150,13 @@ Then you just include Slideout.js and create a new instance with some options:
         right: 0;
         z-index: 0;
         width: 256px;
-        overflow-y: auto;
+        overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
         display: none;
       }
 
       .slideout-panel {
-        position:relative;
+        position: relative;
         z-index: 1;
         will-change: transform;
       }
@@ -196,7 +210,7 @@ Then you just include Slideout.js and create a new instance with some options:
 - Firefox (Android, desktop)
 - Safari (IOS, Android, desktop)
 - Opera (desktop)
-- IE 10+ (desktop)
+- IE 10+ (desktop and mobile)
 
 ## API
 
@@ -207,7 +221,7 @@ Create a new instance of `Slideout`.
 - `options.panel` (HTMLElement) - The DOM element that contains all your application content (`.slideout-panel`).
 - `options.menu` (HTMLElement) - The DOM element that contains your menu application (`.slideout-menu`).
 - `[options.duration]` (Number) - The time (milliseconds) to open/close the slideout. Default: `300`.
-- `[options.fx]` (String) - The CSS effect to use when animating the opening and closing of the slideout. Default: `ease`. Possible values:
+- `[options.easing]` (String) - The CSS effect to use when animating the opening and closing of the slideout. Default: `ease`. Possible values:
     - `ease`
     - `linear`
     - `ease-in`
@@ -215,6 +229,7 @@ Create a new instance of `Slideout`.
     - `ease-in-out`
     - `step-start`
     - `step-end`
+    - [`cubic-bezier`](http://cubic-bezier.com/)
 - `[options.padding]` (Number) - Default: `256`.
 - `[options.tolerance]` (Number) - The number of `px` needed for the menu can be opened completely, otherwise it closes. Default: `70`.
 - `[options.touch]` (Boolean) - Set this option to false to disable Slideout touch events. Default: `true`.
@@ -225,7 +240,8 @@ var slideout = new Slideout({
   'panel': document.getElementById('main'),
   'menu': document.getElementById('menu'),
   'padding': 256,
-  'tolerance': 70
+  'tolerance': 70,
+  'easing': 'cubic-bezier(.32,2,.55,.27)'
 });
 ```
 
@@ -330,6 +346,21 @@ slideout.on('translateend', function() {
 // 'End'
 ```
 
+## `data-slideout-ignore` attribute
+You can use the special HTML attribute `data-slideout-ignore` to disable dragging on some elements. For example, if you have to prevent `slideout` will open when touch on carousels, maps, iframes, etc.
+
+```html
+<main id="panel">
+  <header>
+    <h2>Panel</h2>
+  </header>
+  <div id="carousel" data-slideout-ignore>
+    <h2>Carousel</h2>
+    ...
+  </div>
+</main>
+```
+
 ## npm-scripts
 ```
 $ npm run build
@@ -365,14 +396,7 @@ $('.toggle-button').on('click', function() {
 
 ### How to open slideout from right side.
 
-You should define `left: auto` on the class `.slideout-menu`.
-```css
-.slideout-menu {
-  left: auto;
-}
-```
-
-Then, use the `side` option with the value `right`.
+You should use the `side` option with the value `right`.
 ```js
 var slideout = new Slideout({
   'panel': document.getElementById('content'),
@@ -403,32 +427,110 @@ Demo: http://codepen.io/pazguille/pen/mEdQvX
 
 ### How to use slideout with a fixed header.
 
-You should define a two class names: `fixed` and `fixed-open`.
+First, you should define the styles for your fixed header:
 ```css
-.fixed {
-  backface-visibility: hidden;
+.fixed-header {
   position: fixed;
-  z-index:2;
-  transition: transform 300ms ease;
-}
-
-.fixed-open {
-  transform: translate3d(256px, 0px, 0px);
+  width: 100%;
+  height: 50px;
+  backface-visibility: hidden;
+  z-index: 2;
+  background-color: red;
 }
 ```
 
-Then, using slideout's events you should add / remove the `fixed-open` class name from the fixed element.
+Then, using slideout's events you should translate the fixed header:
 ```js
-slideout.on('beforeopen', function() {
-  document.querySelector('.fixed').classList.add('fixed-open');
+var fixed = document.querySelector('.fixed-header');
+
+slideout.on('translate', function(translated) {
+  fixed.style.transform = 'translateX(' + translated + 'px)';
 });
 
-slideout.on('beforeclose', function() {
-  document.querySelector('.fixed').classList.remove('fixed-open');
+slideout.on('beforeopen', function () {
+  fixed.style.transition = 'transform 300ms ease';
+  fixed.style.transform = 'translateX(256px)';
+});
+
+slideout.on('beforeclose', function () {
+  fixed.style.transition = 'transform 300ms ease';
+  fixed.style.transform = 'translateX(0px)';
+});
+
+slideout.on('open', function () {
+  fixed.style.transition = '';
+});
+
+slideout.on('close', function () {
+  fixed.style.transition = '';
 });
 ```
 
-Demo: http://codepen.io/anon/pen/NqJGBp
+Demo: http://codepen.io/pazguille/pen/ZBxdgw
+
+
+### How to disable dragging on some elements.
+You can use the attribute `data-slideout-ignore` to disable dragging on some elements:
+
+```html
+<nav id="menu">
+  <header>
+    <h2>Menu</h2>
+  </header>
+</nav>
+
+<main id="panel">
+  <header>
+    <h2>Panel</h2>
+  </header>
+  <div id="carousel" data-slideout-ignore>
+    <h2>Carousel</h2>
+    ...
+  </div>
+</main>
+```
+
+### How to add an overlay to close the menu on click.
+You can do that using the powerful `slideout` API and a little extra CSS:
+
+```css
+.panel:before {
+  content: '';
+  display: block;
+  background-color: rgba(0,0,0,0);
+  transition: background-color 0.5s ease-in-out;
+}
+
+.panel-open:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0,0,0,.5);
+  z-index: 99;
+}
+```
+
+```js
+function close(eve) {
+  eve.preventDefault();
+  slideout.close();
+}
+
+slideout
+  .on('beforeopen', function() {
+    this.panel.classList.add('panel-open');
+  })
+  .on('open', function() {
+    this.panel.addEventListener('click', close);
+  })
+  .on('beforeclose', function() {
+    this.panel.classList.remove('panel-open');
+    this.panel.removeEventListener('click', close);
+  });
+```
+
+Demo: http://codepen.io/pazguille/pen/BQYRYK
 
 ## With :heart: by
 - Guille Paz (Front-end developer | Web standards lover)
