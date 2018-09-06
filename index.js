@@ -83,7 +83,7 @@ function Slideout(options) {
   this._orientation = this._side === 'right' ? -1 : 1;
   this._translateTo *= this._orientation;
   this._class = options.class === undefined ? undefined : options.class;
-    
+
   // Sets  classnames
   if (!this.panel.classList.contains('slideout-panel')) {
     this.panel.classList.add('slideout-panel');
@@ -116,7 +116,10 @@ Slideout.prototype.open = function() {
   var self = this;
   this.emit('beforeopen');
   if (!html.classList.contains('slideout-open')) {
-    html.classList.add('slideout-open');
+    setTimeout(function() {
+      html.classList.add('slideout-open');
+    });
+    html.classList.add('slideout-opening');
   }
   if (this._class && !html.classList.contains('slideout-' + this._class)) {
     html.classList.add('slideout-' + this._class);
@@ -126,6 +129,8 @@ Slideout.prototype.open = function() {
   this._opened = true;
   setTimeout(function() {
     self.panel.style.transition = self.panel.style['-webkit-transition'] = '';
+    html.classList.remove('slideout-opening');
+    html.classList.add('slideout-open-complete');
     self.emit('open');
   }, this._duration + 50);
   return this;
@@ -139,12 +144,16 @@ Slideout.prototype.close = function() {
   if (!this.isOpen() && !this._opening) {
     return this;
   }
+
+  html.classList.add('slideout-closing');
+  html.classList.remove('slideout-open-complete');
   this.emit('beforeclose');
   this._setTransition();
   this._translateXTo(0);
   this._opened = false;
   setTimeout(function() {
     html.classList.remove('slideout-open');
+    html.classList.remove('slideout-closing');
     html.classList.remove('slideout-' + self._class);
     self.panel.style.transition = self.panel.style['-webkit-transition'] = self.panel.style[prefix + 'transform'] = self.panel.style.transform = '';
     self.emit('close');
